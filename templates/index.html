@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style type="text/css">
+	.main {
+    width: 50%;
+    margin: 50px auto;
+}
+
+/* Bootstrap 4 text input with search icon */
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+</style>
+	{% if user.is_authenticated %}
+		<div class="container">
+			<div class="main">
+  <div class="form-group has-search">
+    <span class="fa fa-search form-control-feedback"></span>
+    <form method="POST" action="/assistant/check/" id="check">
+    	{% csrf_token %}
+    <input type="text" class="form-control" placeholder="Enter a sentence" id="searchbox" name="query" value="{{query}}">
+    <input type="text" name="hidden_query" hidden="true" id="hidden_query" value="{{query}}">
+    </form>
+  </div>  
+</div>
+{% for dict_item in suggestions %}
+
+<span class="alert alert-danger" id="danger">{{dict_item.wrong}}</span>
+
+   {% for  r in dict_item.right %}
+   	<button id={{r}} for={{dict_item.wrong}} class="alert alert-success" onclick="myFunction(this.id)" >{{r}}</button>
+   {% endfor %}
+<br>  
+<br>  
+<br>  
+{% endfor %}
+<h3 hidden="true" id="final_res"></h3>
+<div id="myDynamicTable">
+</div>
+
+
+
+
+	
+		</div>
+		<script type="text/javascript">
+			$("#searchbox").keypress(function (e) {
+				var key = e.which;
+				var data = $(this).val();
+				if(key == 13)  // the enter key code
+				{
+					$("#check").submit()
+
+					    // $.ajax({
+					    //     type:"POST",
+					    //     url:'/assistant/check/',
+					    //     data:JSON.stringify({"query":data}),
+					    //     success : function(data){
+					    //         if(data['error']){
+					    //             swal(data['error']);
+					    //         }
+					    //         else{
+					    //         	console.log(data['data'])
+					    //         }
+					    //     }
+					    // });					
+
+				}
+			});
+
+
+
+
+
+function myFunction(clicked_id) {
+	console.log(clicked_id)
+	console.log("initailly hiddenquery",$("#hidden_query").val());
+	let choosen = $('#'+clicked_id).text();
+	let wrong = $('#'+clicked_id).attr("for");
+	let sentence = $("#hidden_query").val();
+	let updated_sentence = sentence.replace(wrong,choosen);
+	window.temp=updated_sentence
+	console.log(updated_sentence);
+	$("#hidden_query").val(updated_sentence)
+
+	console.log($("#hidden_query").val());
+	$("#final_res").text(window.temp)
+	$("#final_res").attr("hidden",false);
+}
+$("#final_res").hover(
+           function(){
+           				let data = $("#final_res").text();
+					    $.ajax({
+					        type:"POST",
+					        url:'/assistant/pos/',
+					        data:JSON.stringify({"query":data}),
+					        success : function(data){
+					            if(data['error']){
+					                swal(data['error']);
+					            }
+					            else{
+					            	pos = JSON.parse(data.data);
+
+					            	res = $("#final_res").text().split(" ");
+					            	    var html = "<table border='5|5'>";
+
+html+="<th>"
+html+="TOKEN"
+html+="</th>"
+
+html+="<th>"
+html+="POS"
+html+="</th>"
+    for (var i = 0; i < pos.length; i++) {
+        html+="<tr>";
+        html+="<td>"+res[i]+"</td>";
+        html+="<td>"+pos[i][res[i]]+"</td>";
+        html+="</tr>";
+    }
+    html+="</table>";
+    $("#myDynamicTable").html(html);					            	    
+
+					            }
+					        }
+					    });           	
+               
+           },
+           function(){
+               //DO SOMETHING ON MOUSE LEAVE
+           }
+ )
+
+
+
+	</script>
+	
+
+
+
+	{% endif %}
+{% endblock %}
+
+
+
