@@ -135,6 +135,7 @@ table button:focus:before {
     </form>
   </div>  
 </div>
+
 {% for dict_item in suggestions %}
 
 <span class="alert alert-danger" id="danger">{{dict_item.wrong}}</span>
@@ -162,6 +163,8 @@ table button:focus:before {
 				if(key == 13)  // the enter key code
 				{
 					$("#check").submit()
+
+
 
 					    // $.ajax({
 					    //     type:"POST",
@@ -214,6 +217,7 @@ $("#final_res").hover(
 					            	pos = JSON.parse(data.data);
 
 					            	res = $("#final_res").text().split(" ");
+									console.log(res);
 									var html= "<h3 style='text-align:center'>Part of Speech</h3>"
 					            	html+= "<table border='2|2'>";
 
@@ -242,6 +246,8 @@ html+="</th>"
                //DO SOMETHING ON MOUSE LEAVE
            }
  )
+
+ 
 
 
 
