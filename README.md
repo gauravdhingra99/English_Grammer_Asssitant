@@ -16,7 +16,6 @@ The web app is build with Django. Styles are written in plain CSS and Bootstrap
 
 1. Click on `Fork`.
 2. Go to your fork and `clone` the project to your local machine.
-3. `git clone https://github.com/Gautamaggrawal/Restraunts-finder.git`
 4. Install the requirements `pip install -r requirements.txt`
 5. Finally, run the development server `python manage.py runserver`
 
